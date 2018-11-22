@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" width="device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" type="text/css" rel="stylesheet">
+    <title>Symphonic Backline &middot Admin</title>
+  </head>
+  <body>
+    <!-- edycja nagłówka -->
+    <div class="container text-center">
+      <div class="container-fluid pb-4">
+        <h1 class="pb-5 pt-5">Symphonic Backline Admin</h1>
+        <div class="row pt-2 pb-2 text-center border-bottom">
+          <div class="col"><h2>Edytuj nagłówek i główny opis</h2></div>
+        </div>
+          <div class="row pt-2 pb-2">
+            <form action="/edit_landing" method="POST">
+              <div class="row">
+              <div class="col"><input type="text" name="nazwa" value="{{landing.nazwa}}" required></div>
+              <div class="col"><input type="text" name="name" value="{{landing.name}}" required></div>
+              <div class="col"><textarea class="form-control" name="opis" rows=8 placeholder="opis"required>{{landing.opis}}</textarea></div>
+              <div class="col"><textarea class="form-control" name="description" rows=8 placeholder="description" required>{{landing.description}}</textarea></div>
+              <div class="col"><button class="btn btn-info" type="submit">Edytuj</button></div>
+            </div>
+            </form>
+          </div>
+        </div>
+      <!-- dodawanie nowej sekcji -->
+      <div class="container-fluid pb-4">
+      <div class="row pt-5 pb-5 text-center">
+        <div class="col"><h2>Dodaj nową sekcję</h2></div>
+      </div>
+        <div class="row pt-2 pb-2">
+        <form action="/add_sections" method="POST">
+          <table class="table mb-0">
+            <tr>
+              <td><input type="text" placeholder="nazwa" value="" name="nazwa" required/></td>
+              <td><input type="text" placeholder="name" value="" name="name" required/></td>
+              <td><textarea class="form-control" rows=8 placeholder="opis" name="opis" required></textarea></td>
+              <td><textarea class="form-control" rows=8 placeholder="description" name="description" required></textarea></td>
+              <td><label for="instrumentSection">Sekcja instrumentalna?</label><input type="checkbox" id="instrumentSection" name="instrumentSection"/></td>
+              <td><button class="btn btn-info" type="submit">Dodaj</button></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    <!-- koniec dodawania nowej sekcji -->
+      <!-- edycja głównych sekcji -->
+      <div class="container-fluid pb-4">
+        <div class="row pt-5 pb-5 text-center">
+          <div class="col"><h2>Edycja głównych sekcji</h2></div>
+        </div>
+            {% for section in sections %}
+            <div class="row">
+              <form action="/edit_sections" method="POST">
+                <table class="table mb-0">
+                  <tr>
+                    <td><input type="hidden" value="{{section.id}}" name="id" required hidden/></td>
+                    <td>{{section.id}}.</td>
+                    <td><input type="text" value="{{section.nazwa}}" name="nazwa" required/></td>
+                    <td><input type="text" value="{{section.name}}" name="name" required/></td>
+                    <td><textarea class="form-control" rows=8 name="opis" required>{{section.opis}}</textarea></td>
+                    <td><textarea class="form-control" rows=8 name="description" required>{{section.description}}</textarea></td>
+                    {% if section.instrumentSection %}
+                    <td><label for="instrumentSection">Sekcja instrumentalna</label><input type="checkbox" id="instrumentSection" name="instrumentSection" checked/></td>
+                    {% else %}
+                    <td><label for="instrumentSection">Sekcja instrumentalna</label><input type="checkbox" id="instrumentSection" name="instrumentSection"/></td>
+                    {% endif %}
+                    <td><button class="btn btn-info" type="submit">Zmień</button></td>
+                  </tr>
+                </table>
+              </form>
+            </div>
+        {% endfor %}
+      </div>
+        <!-- koniec edycji głównych sekcji -->
+      <!-- dodawanie instrumentu -->
+      <div class="container-fluid pb-4">
+        <div class="row pt-5 pb-5 text-center">
+          <div class="col"><h2>Dodaj instrument/element wyposażenia</h2></div>
+        </div>
+          <div class="row pt-2 pb-2">
+            <form action="/add_instrument" method="POST" id="add_instrument_form">
+              <table class="table mb-0">
+                <tr>
+                  <td><input type="text" placeholder="nazwa" value="" name="nazwa" required/></td>
+                  <td><input type="text" placeholder="name" value="" name="name" required/></td>
+                  <td><textarea class="form-control" rows=8 placeholder="opis" name="opis" required></textarea></td>
+                  <td><textarea class="form-control" rows=8 placeholder="description" name="description" required></textarea></td>
+                </form>
+                <td>
+                  <select name="section_id" form="add_instrument_form">
+                    {% for section in sections %}
+                    <option value="{{ section.id }}">{{ section.nazwa }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td><button class="btn btn-info" type="submit">Dodaj</button></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      <!-- koniec dodawania instrumentu -->
+      <!-- usuwanie instrumentu -->
+      <div class="container-fluid">
+        <div class="row pt-5 pb-5 text-center border-bottom">
+          <div class="col"><h2>Usuń instrument/element wyposażenia</h2></div>
+        </div>
+      {% for instrument in instruments %}
+        <form action="/delete_instrument" method="POST">
+          <div class="row pb-1 pt-1 text-center border-bottom">
+            <input type="hidden" name="id" value="{{instrument.id}}">
+            <div class="col-2 text-right">{{loop.index}}.</div>
+            <div class="col-2 text-left">{{instrument.nazwa}}</div>
+              <div class="col-4 text-right">
+                <input type="checkbox" class="form-check-input" id="confirm_checkbox" required>
+                <label class="form-check-label" for="confirm_checkbox">Potwierdzam</label>
+              </div>
+            <div class="col-4 text-left"><button class="btn btn-info">Usuń</button></div>
+          </div>
+        </form>
+      {% endfor %}
+    </div>
+    <!-- koniec usuwania instrumentu -->
+    </div>
+  </body>
+</html>
