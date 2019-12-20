@@ -11,7 +11,7 @@ db_path = os.path.join(path, "data.db")
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or "535000$aJw1PZjHNe8kBcj3$q3.BB/Xuv2It48HRS5Yu.uuLxfinIH3atXixUoKO45"
 
 db.init_app(app)
 
